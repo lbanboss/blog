@@ -207,8 +207,8 @@ class AdvancedPHPEncoder {
         
         // 添加复杂的条件检查
         $checkVar = '$' . $this->generateComplexVarName();
-        $structure .= "unset($checkVar);$checkVar=array();$checkVar[]=&\$GLOBALS;\n";
-        $structure .= '$' . $this->generateComplexVarName() . "=call_user_func_array(\"is_array\",$checkVar);\n";
+        $structure .= "unset({$checkVar});{$checkVar}=array();{$checkVar}[]=&\$GLOBALS;\n";
+        $structure .= '$' . $this->generateComplexVarName() . "=call_user_func_array(\"is_array\",{$checkVar});\n";
         
         return $structure;
     }
@@ -368,22 +368,22 @@ class AdvancedPHPEncoder {
         $tempVar2 = '$' . $this->generateComplexVarName();
         $arrayVar = '$' . $this->generateComplexVarName();
         
-        $wrapper .= "unset($tempVar1);$tempVar1=array();$tempVar1[]=&\$GLOBALS;\n";
-        $wrapper .= '$' . $this->generateComplexVarName() . "=call_user_func_array(\"is_array\",$tempVar1);\n";
+        $wrapper .= "unset({$tempVar1});{$tempVar1}=array();{$tempVar1}[]=&\$GLOBALS;\n";
+        $wrapper .= '$' . $this->generateComplexVarName() . "=call_user_func_array(\"is_array\",{$tempVar1});\n";
         
         $label1 = $this->generateComplexVarName();
         $label2 = $this->generateComplexVarName();
         
         $wrapper .= "if(\$" . $this->generateComplexVarName() . "){goto $label1;}goto $label2;\n";
-        $wrapper .= "$label1:unset($tempVar2);$tempVar2=&\$GLOBALS[" . $this->arrayNamePatterns[1] . "];goto " . $this->generateComplexVarName() . ";\n";
-        $wrapper .= "$label2:$tempVar2=\$GLOBALS[" . $this->arrayNamePatterns[1] . "];\n";
+        $wrapper .= "$label1:unset({$tempVar2});{$tempVar2}=&\$GLOBALS[" . $this->arrayNamePatterns[1] . "];goto " . $this->generateComplexVarName() . ";\n";
+        $wrapper .= "$label2:{$tempVar2}=\$GLOBALS[" . $this->arrayNamePatterns[1] . "];\n";
         
         // 添加原始语句
         $wrapper .= $statement . ";\n";
         
         // 添加一些后续的混淆代码
-        $wrapper .= "unset($arrayVar);$arrayVar=array();$arrayVar[]=&$tempVar2;\n";
-        $wrapper .= "unset($varName);$varName=" . $this->generateComplexMathExpression(rand(1000, 9999)) . ";\n";
+        $wrapper .= "unset({$arrayVar});{$arrayVar}=array();{$arrayVar}[]=&{$tempVar2};\n";
+        $wrapper .= "unset({$varName});{$varName}=" . $this->generateComplexMathExpression(rand(1000, 9999)) . ";\n";
         
         return $wrapper;
     }
