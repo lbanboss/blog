@@ -1,0 +1,61 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../src/Encoder.php';
+
+use Obfuscator\Encoder;
+
+function usage(): void {
+    fwrite(STDERR, "Usage: encode <input.php> [-o output.php] [--strip-comments] [--strip-whitespace] [--license <host_substring>]\n");
+}
+
+$argvCopy = $argv;
+array_shift($argvCopy);
+if (count($argvCopy) === 0) {
+    usage();
+    exit(1);
+}
+
+$input = null;
+$output = null;
+$options = [
+    'strip_comments' => false,
+    'strip_whitespace' => false,
+    'license' => null,
+];
+
+while (($arg = array_shift($argvCopy)) !== null) {
+    if ($arg === '-o') {
+        $output = array_shift($argvCopy) ?: null;
+    } elseif ($arg === '--strip-comments') {
+        $options['strip_comments'] = true;
+    } elseif ($arg === '--strip-whitespace') {
+        $options['strip_whitespace'] = true;
+    } elseif ($arg === '--license') {
+        $options['license'] = array_shift($argvCopy) ?: null;
+    } elseif ($arg[0] === '-') {
+        usage();
+        exit(1);
+    } else {
+        $input = $arg;
+    }
+}
+
+if ($input === null) {
+    usage();
+    exit(1);
+}
+
+if ($output === null) {
+    $output = preg_replace('/\.php$/i', '', $input) . '.encoded.php';
+}
+
+try {
+    $encoder = new Encoder();
+    $encoder->encodeFile($input, $output, $options);
+    fwrite(STDOUT, "Encoded -> {$output}\n");
+} catch (Throwable $e) {
+    fwrite(STDERR, "Error: " . $e->getMessage() . "\n");
+    exit(1);
+}
