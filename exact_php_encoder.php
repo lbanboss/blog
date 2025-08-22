@@ -124,8 +124,8 @@ class ExactPHPEncoder {
         $label2 = $this->generateExactVarName();
         
         $code .= "if(\$" . $this->generateExactVarName() . "){goto $label1;}goto $label2;\n";
-        $code .= "$label1:{$tempVars[1]}=&\$GLOBALS[$arrayName];goto " . $this->generateExactVarName() . ";\n";
-        $code .= "$label2:{$tempVars[1]}=\$GLOBALS[$arrayName];\n";
+        $code .= "$label1:{$tempVars[1]}=&\$GLOBALS[{$arrayName}];goto " . $this->generateExactVarName() . ";\n";
+        $code .= "$label2:{$tempVars[1]}=\$GLOBALS[{$arrayName}];\n";
         
         // 创建嵌套的数组检查
         $code .= "unset({$tempVars[2]});{$tempVars[2]}=array();{$tempVars[2]}[]=&{$tempVars[1]};\n";
@@ -136,8 +136,8 @@ class ExactPHPEncoder {
         
         $code .= '{' . $this->generateExactVarName() . "}=call_user_func_array(\"is_array\",{$tempVars[2]});\n";
         $code .= "if(\$" . $this->generateExactVarName() . "){goto $label3;}goto $label4;\n";
-        $code .= "$label3:$varName=&\$GLOBALS[$arrayName][{$tempVars[3]}];goto " . $this->generateExactVarName() . ";\n";
-        $code .= "$label4:$varName=\$GLOBALS[$arrayName][{$tempVars[3]}];\n";
+        $code .= "$label3:{$varName}=&\$GLOBALS[{$arrayName}][{$tempVars[3]}];goto " . $this->generateExactVarName() . ";\n";
+        $code .= "$label4:{$varName}=\$GLOBALS[{$arrayName}][{$tempVars[3]}];\n";
         
         return $code;
     }
@@ -166,9 +166,9 @@ class ExactPHPEncoder {
         $code .= '$' . $this->generateExactVarName() . "=1;\n";
         $code .= '$' . $this->generateExactVarName() . "=call_user_func_array(\"is_bool\",array(&\$" . $this->generateExactVarName() . "));\n";
         $code .= "if(\$" . $this->generateExactVarName() . "){unset(\$" . $this->generateExactVarName() . ");}else{unset(\$" . $this->generateExactVarName() . ");}\n";
-        $code .= "unset($checkVar);$checkVar=&\$" . $this->generateExactVarName() . ";\n";
-        $code .= "if($checkVar==null)$checkVar=\$" . $this->generateExactVarName() . "=true;}}\n";
-        $code .= "if($checkVar){" . $functionName . ";}else{unset($checkVar);}\n";
+        $code .= "unset({$checkVar});{$checkVar}=&\$" . $this->generateExactVarName() . ";\n";
+        $code .= "if({$checkVar}==null){$checkVar}=\$" . $this->generateExactVarName() . "=true;}}\n";
+        $code .= "if({$checkVar}){" . $functionName . ";}else{unset({$checkVar});}\n";
         
         return $code;
     }
@@ -189,8 +189,8 @@ class ExactPHPEncoder {
         
         // 4. 创建User_Model实例
         $userModelVar = '$' . $this->generateExactVarName();
-        $result .= "unset($userModelVar);$userModelVar=new User_Model();\n";
-        $result .= "\$User_Model=$userModelVar;\n";
+        $result .= "unset({$userModelVar});{$userModelVar}=new User_Model();\n";
+        $result .= "\$User_Model={$userModelVar};\n";
         
         // 5. 生成主要的混淆逻辑
         $result .= $this->generateExactMainLogic($sourceCode);
@@ -206,19 +206,19 @@ class ExactPHPEncoder {
         $checkVar = '$' . $this->generateExactVarName();
         $tempVar = '$' . $this->generateExactVarName();
         
-        $logic .= "unset($checkVar);$checkVar=isset(\$GLOBALS[DAFA_DEC][" . $this->generateExactMathExpression(-4098) . "+E_WARNING+8*E_USER_WARNING][" . $this->createExactPackCall('CF__C_AA', -4096, -262398) . "]);\n";
-        $logic .= "$tempVar=$checkVar;\n";
+        $logic .= "unset({$checkVar});{$checkVar}=isset(\$GLOBALS[DAFA_DEC][" . $this->generateExactMathExpression(-4098) . "+E_WARNING+8*E_USER_WARNING][" . $this->createExactPackCall('CF__C_AA', -4096, -262398) . "]);\n";
+        $logic .= "{$tempVar}={$checkVar};\n";
         
         // 创建复杂的数组操作链
         $arrayVar = '$' . $this->generateExactVarName();
         $refVar = '$' . $this->generateExactVarName();
         
-        $logic .= "unset($refVar);$refVar=&$tempVar;\n";
-        $logic .= "\$" . $this->generateExactVarName() . "=&$refVar;\n";
+        $logic .= "unset({$refVar});{$refVar}=&{$tempVar};\n";
+        $logic .= "\$" . $this->generateExactVarName() . "=&{$refVar};\n";
         
         // 添加数组检查
-        $logic .= "unset($arrayVar);$arrayVar=array();$arrayVar[]=&\$GLOBALS;\n";
-        $logic .= '$' . $this->generateExactVarName() . "=call_user_func_array(\"is_array\",$arrayVar);\n";
+        $logic .= "unset({$arrayVar});{$arrayVar}=array();{$arrayVar}[]=&\$GLOBALS;\n";
+        $logic .= '$' . $this->generateExactVarName() . "=call_user_func_array(\"is_array\",{$arrayVar});\n";
         
         // 生成goto标签结构
         $label1 = $this->generateExactVarName();
@@ -250,28 +250,28 @@ class ExactPHPEncoder {
             $checkVar = '$' . $this->generateExactVarName();
             $mathVar = '$' . $this->generateExactVarName();
             
-            $chain .= "unset($varV01);$varV01=array();$varV01[]=&\$GLOBALS;\n";
-            $chain .= "$checkVar=call_user_func_array(\"is_array\",$varV01);\n";
+            $chain .= "unset({$varV01});{$varV01}=array();{$varV01}[]=&\$GLOBALS;\n";
+            $chain .= "{$checkVar}=call_user_func_array(\"is_array\",{$varV01});\n";
             
             $label1 = $this->generateExactVarName();
             $label2 = $this->generateExactVarName();
             
-            $chain .= "if($checkVar){goto $label1;}goto $label2;\n";
-            $chain .= "$label1:$varV001=&\$GLOBALS[CF__C_AA];goto " . $this->generateExactVarName() . ";\n";
-            $chain .= "$label2:$varV001=\$GLOBALS[CF__C_AA];\n";
+            $chain .= "if({$checkVar}){goto $label1;}goto $label2;\n";
+            $chain .= "$label1:{$varV001}=&\$GLOBALS[CF__C_AA];goto " . $this->generateExactVarName() . ";\n";
+            $chain .= "$label2:{$varV001}=\$GLOBALS[CF__C_AA];\n";
             
-            $chain .= "unset($varV0001);$varV0001=array();$varV0001[]=&$varV001;\n";
-            $chain .= "unset($varV1);unset($mathVar);$mathVar=" . $this->generateExactMathExpression(rand(-50000, 50000)) . ";\n";
+            $chain .= "unset({$varV0001});{$varV0001}=array();{$varV0001}[]=&{$varV001};\n";
+            $chain .= "unset({$varV1});unset({$mathVar});{$mathVar}=" . $this->generateExactMathExpression(rand(-50000, 50000)) . ";\n";
             
             $checkVar2 = '$' . $this->generateExactVarName();
-            $chain .= "$checkVar2=call_user_func_array(\"is_array\",$varV0001);\n";
+            $chain .= "{$checkVar2}=call_user_func_array(\"is_array\",{$varV0001});\n";
             
             $label3 = $this->generateExactVarName();
             $label4 = $this->generateExactVarName();
             
-            $chain .= "if($checkVar2){goto $label3;}goto $label4;\n";
-            $chain .= "$label3:unset(\$" . $this->generateExactVarName() . ");$varV1=&\$GLOBALS[CF__C_AA][$mathVar];goto " . $this->generateExactVarName() . ";\n";
-            $chain .= "$label4:$varV1=\$GLOBALS[CF__C_AA][$mathVar];\n";
+            $chain .= "if({$checkVar2}){goto $label3;}goto $label4;\n";
+            $chain .= "$label3:unset(\$" . $this->generateExactVarName() . ");{$varV1}=&\$GLOBALS[CF__C_AA][{$mathVar}];goto " . $this->generateExactVarName() . ";\n";
+            $chain .= "$label4:{$varV1}=\$GLOBALS[CF__C_AA][{$mathVar}];\n";
             
             // 添加更多嵌套操作
             $this->addNestedArrayOperations($chain, $varV1, $varV2);
@@ -287,39 +287,39 @@ class ExactPHPEncoder {
         $varV0002 = '$' . $this->generateExactVarName() . 'V0002';
         $mathVar2 = '$' . $this->generateExactVarName();
         
-        $chain .= "unset($varV02);$varV02=array();$varV02[]=&\$GLOBALS;\n";
-        $chain .= '$' . $this->generateExactVarName() . "=call_user_func_array(\"is_array\",$varV02);\n";
+        $chain .= "unset({$varV02});{$varV02}=array();{$varV02}[]=&\$GLOBALS;\n";
+        $chain .= '$' . $this->generateExactVarName() . "=call_user_func_array(\"is_array\",{$varV02});\n";
         
         $label1 = $this->generateExactVarName();
         $label2 = $this->generateExactVarName();
         
         $chain .= "if(\$" . $this->generateExactVarName() . "){goto $label1;}goto $label2;\n";
-        $chain .= "$label1:unset(\$" . $this->generateExactVarName() . ");$varV002=&\$GLOBALS[CF__C_AA];goto " . $this->generateExactVarName() . ";\n";
-        $chain .= "$label2:$varV002=\$GLOBALS[CF__C_AA];\n";
+        $chain .= "$label1:unset(\$" . $this->generateExactVarName() . ");{$varV002}=&\$GLOBALS[CF__C_AA];goto " . $this->generateExactVarName() . ";\n";
+        $chain .= "$label2:{$varV002}=\$GLOBALS[CF__C_AA];\n";
         
-        $chain .= "unset($varV0002);$varV0002=array();$varV0002[]=&$varV002;\n";
-        $chain .= "unset($var2);unset($mathVar2);$mathVar2=" . $this->generateExactMathExpression(rand(-100000, 100000)) . ";\n";
+        $chain .= "unset({$varV0002});{$varV0002}=array();{$varV0002}[]=&{$varV002};\n";
+        $chain .= "unset({$var2});unset({$mathVar2});{$mathVar2}=" . $this->generateExactMathExpression(rand(-100000, 100000)) . ";\n";
         
         $checkVar = '$' . $this->generateExactVarName();
-        $chain .= "$checkVar=call_user_func_array(\"is_array\",$varV0002);\n";
+        $chain .= "{$checkVar}=call_user_func_array(\"is_array\",{$varV0002});\n";
         
         $label3 = $this->generateExactVarName();
         $label4 = $this->generateExactVarName();
         
-        $chain .= "if($checkVar){goto $label3;}goto $label4;\n";
-        $chain .= "$label3:$var2=&\$GLOBALS[CF__C_AA][$mathVar2];goto " . $this->generateExactVarName() . ";\n";
-        $chain .= "$label4:$var2=\$GLOBALS[CF__C_AA][$mathVar2];\n";
+        $chain .= "if({$checkVar}){goto $label3;}goto $label4;\n";
+        $chain .= "$label3:{$var2}=&\$GLOBALS[CF__C_AA][{$mathVar2}];goto " . $this->generateExactVarName() . ";\n";
+        $chain .= "$label4:{$var2}=\$GLOBALS[CF__C_AA][{$mathVar2}];\n";
         
         // 创建数组合并操作
         $arrayA3 = '$' . $this->generateExactVarName() . 'A3';
         $arrayZ0 = '$' . $this->generateExactVarName() . 'Z0';
         
-        $chain .= "$arrayA3=array();$arrayA3[]=&$var1;$arrayA3[]=&$var2;\n";
-        $chain .= "$arrayZ0=call_user_func_array(\"pack\",$arrayA3);\n";
+        $chain .= "{$arrayA3}=array();{$arrayA3}[]=&{$var1};{$arrayA3}[]=&{$var2};\n";
+        $chain .= "{$arrayZ0}=call_user_func_array(\"pack\",{$arrayA3});\n";
         
         // 添加addslashes和trim调用
         $finalVar = '$' . $this->generateExactVarName();
-        $chain .= "unset($finalVar);$finalVar=call_user_func('addslashes',call_user_func('trim',\$GLOBALS[DAFA_DEC][" . $this->generateExactMathExpression(3264) . "-E_STRICT-128)-E_USER_NOTICE-(144-E_COMPILE_ERROR-16)][$arrayZ0]));\n";
+        $chain .= "unset({$finalVar});{$finalVar}=call_user_func('addslashes',call_user_func('trim',\$GLOBALS[DAFA_DEC][" . $this->generateExactMathExpression(3264) . "-E_STRICT-128)-E_USER_NOTICE-(144-E_COMPILE_ERROR-16)][{$arrayZ0}]));\n";
     }
     
     // 混淆用户代码
@@ -369,14 +369,14 @@ class ExactPHPEncoder {
         $jsonVar = '$' . $this->generateExactVarName();
         
         // 创建状态信息数组
-        $code .= "unset($outputVar);$outputVar=array();\n";
-        $code .= '$' . $this->generateExactVarName() . "=$outputVar;\n";
+        $code .= "unset({$outputVar});{$outputVar}=array();\n";
+        $code .= '$' . $this->generateExactVarName() . "={$outputVar};\n";
         $code .= "if(is_array(\$" . $this->generateExactVarName() . ")){goto " . $this->generateExactVarName() . ";}\n";
         $code .= $this->generateExactVarName() . ":unset(\$" . $this->generateExactVarName() . ");\n";
         
         // 添加原始echo语句的混淆版本
-        $code .= "unset($jsonVar);$jsonVar=call_user_func('json_encode',\$" . $this->generateExactVarName() . ");\n";
-        $code .= "echo $jsonVar;\n";
+        $code .= "unset({$jsonVar});{$jsonVar}=call_user_func('json_encode',\$" . $this->generateExactVarName() . ");\n";
+        $code .= "echo {$jsonVar};\n";
         
         return $code;
     }
@@ -392,8 +392,8 @@ class ExactPHPEncoder {
         preg_match('/if\s*\(([^)]+)\)/', $statement, $matches);
         $condition = isset($matches[1]) ? $matches[1] : 'true';
         
-        $code .= "$condVar=$condition;\n";
-        $code .= "if($condVar){goto $label1;}goto $label2;\n";
+        $code .= "{$condVar}=$condition;\n";
+        $code .= "if({$condVar}){goto $label1;}goto $label2;\n";
         $code .= "$label1:unset(\$" . $this->generateExactVarName() . ");";
         
         // 提取if语句体
@@ -420,8 +420,8 @@ class ExactPHPEncoder {
             
             // 创建复杂的赋值结构
             $code .= $this->createExactVariableOperations($obfuscatedVar, 'CF__C_AA', rand(1000, 9999));
-            $code .= "unset($tempVar);$tempVar=$value;\n";
-            $code .= "$obfuscatedVar=$tempVar;\n";
+            $code .= "unset({$tempVar});{$tempVar}=$value;\n";
+            $code .= "{$obfuscatedVar}={$tempVar};\n";
             
             $this->variableMap[$varName] = $obfuscatedVar;
         }
@@ -434,8 +434,8 @@ class ExactPHPEncoder {
         $code = '';
         $wrapperVar = '$' . $this->generateExactVarName();
         
-        $code .= "unset($wrapperVar);$wrapperVar=\"$statement\";\n";
-        $code .= "if(true){eval($wrapperVar);}else{unset($wrapperVar);}\n";
+        $code .= "unset({$wrapperVar});{$wrapperVar}=\"$statement\";\n";
+        $code .= "if(true){eval({$wrapperVar});}else{unset({$wrapperVar});}\n";
         
         return $code;
     }
